@@ -47,17 +47,31 @@ empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v312/5)) %>%
                                  Apalancamiento)
 
 
+
 #Parte 2 - Preguntas de Investigación
+
+# En esta sección deberás contestar las preguntas planteadas y éstas te ayudarán a darle 
+#forma a la redacción de tu informe a entregar.
+#¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
+
+
+#¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de 
+#60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?
+
+
+#Describe el top 10 de empresas con mayor apalancamiento.
+balances_2014 %>% mutate(apalancamiento = v312/6) %>% view("mutate1")
+balances_2014 %>% transmute(Apalancamiento = v312/6) %>% view("transmute1")
+balances_2014 %>% arrange(desc(apalancamiento=v312/6))%>%  view("top10_empresas")
 
 ## Crea una tabla resumiendo el número total de empresas por actividad económica y
 ## por actividad económica por cada cantón. La tabla simplemente debe aparecer
 ## Como un data frame o tibble en tu script.
-   
+#1  
 empresas_1 %>% 
 arrange(actividad_economica,canton) %>% 
 count()
-
-
+#2
 total_empresas<-select(all_of(total_empresas)) %>% 
   group_by(Actividad_economica, Canton) %>% 
   pivot_wider(names_from = Actividad_economica ,values_from = total_empresas)
@@ -65,31 +79,14 @@ total_empresas<-select(all_of(total_empresas)) %>%
 # 3. Gráficamente muestra el comparativo de los indicadores financieros de liquidez y
 # solvencia por Status y provincia.
 
-ggplot(balances_2014,aes(x = IndicadorFinanciero,y = Provincia)) +
-  geom_point(aes(color = status )) +
-  facet_wrap(("status"))
 
-ggplot(balances_2014, aes(x = Provincia, y = IndicadorLiquidez, fill = Status)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Comparativo de Indicadores Financieros de Liquidez por Status y Provincia",
-       x = "Provincia", y = "Indicador de Liquidez")
+ggplot(balances_2014,aes(x= v312/5, y = v312/6))+
+  geom_line()+
+labs(title = "Comparativo de indicadores financieros de liquidez por Status y provincia",
+     x= "v312/6", y ="v312/6")
 
-ggplot(balances_2014,aes(x=Liquidez, y = solvencia, fill=status)) +
-  geom_histogram() +
-  labs(title ="Comparativo de Indicadores Financieros de Liquidez por Status y Provincia", 
-       y ="solvencia", x ="liquidez")
-
-ggplot(datos, aes(x = Provincia, y = IndicadorLiquidez, fill = Status)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(title = "Comparativo de Indicadores Financieros por Status y Provincia",
-       x = "Provincia", y = "Indicador") +
-  facet_wrap(~ Indicador, scales = "free_y", nrow = 2) +
-  theme_minimal()
-
------------------------------------------
-empresas_1 %>% mutate(apalancamiento = Activo/Patrimonio) %>% view("mutate1")
-
-
+ggplot(balances_2014,aes(x= v312/5, y = v312/6))+
+  geom_point()
 
 
 
