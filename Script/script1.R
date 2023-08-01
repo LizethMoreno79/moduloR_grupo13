@@ -20,11 +20,11 @@ head(balances_2014)
 empresas<-tibble::as_tibble(balances_2014) 
 class(empresas)
 #1.2 empresas deberá tener las siguientes variables:
-empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v312/5)) %>% 
-                          mutate(EndeudamientoActivo= (v312/6))  %>%
-                          mutate(EndeudamientoPatrimonial= (v312/6))  %>%
-                          mutate(EndeudamientoActivoFijo= (v312/6))  %>%
-                          mutate(Apalancamiento= (v312/6))  %>%
+empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v345/v539)) %>% 
+                          mutate(EndeudamientoActivo= (v599/v499))  %>%
+                          mutate(EndeudamientoPatrimonial= (v599/v698))  %>%
+                          mutate(EndeudamientoActivoFijo= (v698/v498))  %>%
+                          mutate(Apalancamiento= (v499/v698))  %>%
                           select(Empresas=nombre_cia, 
                                  Status=situacion,
                                  TipoEmpresa = tipo, 
@@ -39,12 +39,6 @@ empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v312/5)) %>%
                                  EndeudamientoPatrimonial,
                                  EndeudamientoActivoFijo,
                                  Apalancamiento)
-
-
-
-
-
-
 
 
 
