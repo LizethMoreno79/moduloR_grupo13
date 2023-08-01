@@ -20,7 +20,7 @@ head(balances_2014)
 empresas<-tibble::as_tibble(balances_2014) 
 class(empresas)
 #1.2 empresas deberá tener las siguientes variables:
-empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v345/v539)) %>% 
+empresas_1<- empresas %>%  mutate(LiquidezCorriente= (v345/v539)) %>% 
                           mutate(EndeudamientoActivo= (v599/v499))  %>%
                           mutate(EndeudamientoPatrimonial= (v599/v698))  %>%
                           mutate(EndeudamientoActivoFijo= (v698/v498))  %>%
@@ -41,16 +41,12 @@ empresas_1<-empresas %>%  mutate(LiquidezCorriente= (v345/v539)) %>%
                                  Apalancamiento)
 
 
-
-
-
-
-
-
-
-
-#Parte 2 - Preguntas de Investigación
-
+total_empresas<- empresas_1 %>% group_by(Actividad_economica, Canton) %>% pivot_wider(names_from = Actividad_economica ,values_from = total_empresas)
+  
+  
+  
+  
+  
 
 
 
