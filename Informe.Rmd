@@ -1,0 +1,202 @@
+---
+title: "PROYECTO FINAL MÓDULO DE R"
+author: "Lizeth Moreno, Carolina Briones, Tamara Quijano"
+date: "`r Sys.Date()`"
+output: 
+  rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+El coronavirus fue una enfermedad viral que afect ́o a todos los pa ́ıses del mundo. Esto contrajo varias
+consecuencias econ ́omicas, pol ́ıticas y dem ́as problemas. El deterioro acelerado de la econom ́ıa fue uno de los
+mayores impactos. ..... Poner en qu ́e afect ́o a la econom ́ıa de todos los paises.... de los activos fijos y dem ́as de
+varias empresas..
+
+## Objetivos
+
+
+## Descripción de la Base de Datos
+
+
+Las  bases de datos proporcionadas son 4 en formato xlsx .
+
+- Balances 2014: Contiene informaci ́on correspondiente a balances de varias empresas, se describre su situa-
+- ci ́on, pa ́ıs, provincia, activos fijos, pasivos, entre otros.
+cias codebook: Diccionario
+- ciiu: Listado de actividades econ ́omicas con su respectivo nivel
+- Formulario 102: Documento de la declaraci ́on del impuesto a la renta personas naturales y sucesiones
+invisas obligadas a llevar contabilidad (SR
+
+
+### Lectura de Librerías
+
+Para el an ́alisis de este proyecto se han cargado las siguientes liberias:
+
+- readxl: Paquete que facilita la transferencia de datos de Excel a R.
+- tidyr: Es un paquete que nos ayuda a simplificar el proceso de creación de datos ordenados
+- ggplot2: Sistema organizado de visualización de datos
+- tidyverse: Es una colección de paquetes disponibles en R y orientados a la manipulación, importación, exploración y visualización de datos. Está compuesto de los siguientes paquetes: readr, dplyr, ggplot2, tibble, tidyr, purr, stringr, focats  .
+- dplyr:
+
+```{r}
+library(readxl)
+library(tidyr)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+```
+
+
+### Tratamiento de la base
+
+Una vez cargadas las librerias, se prosigue con la lectura de los datos. Para ellos 
+
+```{r echo=TRUE}
+balances_2014 <- read_excel("Data/balances_2014.xlsx")
+cias_codebook <- read_excel("Data/cias_codebook.xlsx")
+ciiu <- read_excel("Data/ciiu.xlsx")
+Formulario_102 <- read_excel("Data/Formulario 102.xls")
+```
+
+
+
+Utilizando los datos en el archivo llamado balance 2014 se generó un tibble, posterior se reduce la dimensión de la base.
+
+```{r}
+empresas<-tibble::as_tibble(balances_2014) 
+empresas_1<- empresas %>%  mutate(LiquidezCorriente= (v345/v539)) %>% 
+                            mutate(EndeudamientoActivo= (v599/v499),
+                                   EndeudamientoPatrimonial= (v599/v698),
+                                   EndeudamientoActivoFijo= (v698/v498),
+                                   Apalancamiento= (v499/v698))  %>%
+                            select(Empresas=nombre_cia, 
+                                   Status=situacion,
+                                   TipoEmpresa = tipo, 
+                                   Pais=pais, 
+                                   Provincia=provincia, 
+                                   Canton=canton, 
+                                   Ciudad=ciudad,
+                                   Actividad_economica=ciiu4_nivel1,
+                                   SubActividad=ciiu4_nivel6,
+                                   LiquidezCorriente,
+                                   EndeudamientoActivo,
+                                   EndeudamientoPatrimonial,
+                                   EndeudamientoActivoFijo,
+                                   Apalancamiento)
+```
+
+Esta nueva base de datos estará conformada por las siguientes variables:
+
+
+
+- Empresas: variable que contiene los nombres de las compáıas
+- Status: variable que especifica la situaci ́on de la compa ̃n ́ıa ( activa, en liquidaci ́on, etc)
+- Tipo de empresa: variable que contiene la clase de compa ̃n ́ıa analizada (an ́onima, econom ́ıa mixta, etc)
+- Pa ́ıs
+- Provincia
+- Cantón
+- Ciudad
+- Actividad ecońomica: variable que contiene la descrción delc ́odigo CIIU4 NIVEL 1
+- Subactividad: variable que contiene la descripcíon del  ́odigo CIIU4 NIVEL 6
+- Liquidez corriente: Indicador financiero que se compone de la siguiente forma:
+
+$$Liquidez_Corriente=\frac{Activo_Corriente}{Pasivo_Corriente}$$
+- Endeudamiento del activo:
+
+$$Endeudamiento_Activo=\frac{Pasivo}{Activo}$$
+- Endeudamiento patrimonial:
+
+$$Endeudamiento_Patrimonial=\frac{Pasivo}{Patrimonio}$$
+- Endeudamiento del Activo Fijo:
+
+$$Endeudamiento_Activo_Fijo=\frac{Patrimonio}{Activo_No_Corriente}$$
+- Apalancamiento:
+
+$$Apalancamiento=\frac{Activo}{Patrimonio}$$
+
+
+## Análisis
+
+Una vez se analizó la composición de variables, procedemos a explorar los datos 
+
+```{r}
+str(empresas_1)
+glimpse(empresas_1)
+```
+
+Con esto podemos ver que 9 variables son de tipo caracter y 5 son variables numéricas (dbl). \\
+
+Ahora, convertimos las variables de texto a factores( variables con categoría) utilizando el comando as.factor().
+
+```{r}
+empresas_1$Status<- as.factor(empresas_1$Status) 
+empresas_1$TipoEmpresa<- as.factor(empresas_1$TipoEmpresa)
+empresas_1$Actividad_economica<- as.factor(empresas_1$Actividad_economica)
+empresas_1$SubActividad<- as.factor(empresas_1$SubActividad)#convertir a factor
+glimpse(empresas_1)
+
+```
+
+
+
+
+
+Para entender mejor los datos calculamos los estadísticos de las variables numéricas. Para ellos utilizamos el comando summary(), que nos muestra estadísticas descriptivas como el mínimo, máximo, cuartiles, promedio. El resultado aplicado a toda la base es el siguiente:
+
+```{r}
+summary(empresas_1)
+```
+
+### 2.Crea una tabla resumiendo el número total de empresas por actividad económica y
+por actividad económica por cada cantón. La tabla simplemente debe aparecer
+como un data frame o tibble en tu script. 
+
+
+### 3. Gráficamente muestra el comparativo de los indicadores financieros de liquidez y
+solvencia por Status y provincia.
+
+### 4.Gráficamente muestra el comparativo de los indicadores financieros de liquidez y
+solvencia por tipo de empresa.
+
+
+
+
+## Preguntas de Investigación
+
+### ¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
+
+### ¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de
+60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?
+
+### Describe el top 10 de empresas con mayor apalancamiento.
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
