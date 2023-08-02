@@ -17,7 +17,20 @@ consecuencias econ ́omicas, pol ́ıticas y dem ́as problemas. El deterioro ac
 mayores impactos. ..... Poner en qu ́e afect ́o a la econom ́ıa de todos los paises.... de los activos fijos y dem ́as de
 varias empresas..
 
+Las ratios financieros son los indicadores de la situación de la empresa. Son una relación entre unidades financieras, con la que es posible realizar un análisis de la situación o balance económico de la empresa. Se adopta acuerdos a las necesidades concretas para analizar la situación económica para posteriormente mejorar la gestión en la toma de decisiones.
+
+Los cuatro tipos de ratios financieras se clasifican en:
+-Liquidez que se realiza mediante la suma de dinero disponible en caja, más el dinero pendiente de recibir por los clientes,dividir el pasivo a corto y largo plazo. 
+-Gestión detecta la efectividad y eficiencia en la gestión de las empresas relativas a las ventas al contado, ventas totales, los cobros y gestión de inventarios. 
+-Solvencia se relacionan con un mayor espacio de tiempo entre dos variables: el activo total que se divide con el pasivo total. 
+-Rentabilidad trata de la conexión entre los recursos invertidos y los beneficios generados..
+
+
 ## Objetivos
+
+-Analizar los ratios comparándolos en función de la situación económicas- financieras de la empresa, dar soluciones concretas acerca de la situación de la empresa.
+
+-Realizar la descripción de los cuatro tipos de indicadores financieros como liquidez, gestión, solvencia y de rentabilidad para comparar a las empresas por su tamaño en función de las ratios financieros.
 
 
 ## Descripción de la Base de Datos
@@ -200,3 +213,8 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## Conclusiones
+
+Las ratios financieros se usan habitualmente para analizar el comportamiento económico y financiero de la empresa, simplificar la toma de decisiones y mejorar su gestión.
