@@ -135,86 +135,160 @@ $$Apalancamiento=\frac{Activo}{Patrimonio}$$
 
 ## Análisis
 
-Una vez se analizó la composición de variables, procedemos a explorar los datos 
+
+## Análisis
+
+#### Crea una tabla resumiendo el número total de empresas por actividad económica y por actividad económica por cada cantón. La tabla simplemente debe aparecer como un data frame o tibble en tu script.
 
 ```{r}
-str(empresas_1)
-glimpse(empresas_1)
+#total empresas por actividad económica y por cantón
+# Resumen del número total de empresas por actividad económica
+resumen_actividad_economica <- empresas_4 %>%
+  group_by(Actividad_economica) %>%
+  summarise(Total_Empresas = n())
+resumen_actividad_economica
+# Resumen del número total de empresas por actividad económica y por cantón
+resumen_actividad_canton <- empresas_4 %>%
+  group_by(Actividad_economica, Canton) %>%
+  summarise(Total_Empresas = n()) 
+resumen_actividad_canton
 ```
 
-Con esto podemos ver que 9 variables son de tipo caracter y 5 son variables numéricas (dbl). \\
-
-Ahora, convertimos las variables de texto a factores( variables con categoría) utilizando el comando as.factor().
+####Gráficamente muestra el comparativo de los indicadores financieros de liquidez y solvencia por Status y provincia.
 
 ```{r}
-empresas_1$Status<- as.factor(empresas_1$Status) 
-empresas_1$TipoEmpresa<- as.factor(empresas_1$TipoEmpresa)
-empresas_1$Actividad_economica<- as.factor(empresas_1$Actividad_economica)
-empresas_1$SubActividad<- as.factor(empresas_1$SubActividad)#convertir a factor
-glimpse(empresas_1)
-
+#Graficar liquidez por status y provincia
+#solo Status=ACTIVA
+#liquidez
+empresas_activa<- empresas_4 %>% filter(Status=="ACTIVA")
+ggplot(empresas_activa, aes(x=fecha_const,  y = LiquidezCorriente, color= Provincia)) +
+  geom_line() +
+  labs(title = "Gráfico comparativo",
+       subtitle = "Gráfico comparativo entre Liquidez Corriente y provincia")+
+  facet_wrap(~Provincia)+
+  theme_grey()+
+  theme(legend.position = "none")
+#solvencia
+ggplot(empresas_activa, aes(x=fecha_const,  y = Apalancamiento, color= Provincia)) +
+  geom_line() +
+  labs(title = "Gráfico comparativo",
+       subtitle = "Gráfico comparativo entre Solvencia y provincia")+
+  facet_wrap(~Provincia)+
+  theme_grey()+
+  theme(legend.position = "none")
 ```
 
+#### Gráficamente muestra el comparativo de los indicadores financieros de liquidez y solvencia por tipo de empresa.
+```{r}
+#Graficar liquidez por status y tipo de empresa
+#liquidez
+ggplot(empresas_activa, aes(x=fecha_const,  y = LiquidezCorriente, color= TipoEmpresa, group=TipoEmpresa)) +
+  geom_line() +
+  labs(title = "Gráfico comparativo",
+       subtitle = "Gráfico comparativo entre Liquidez Corriente y Tipo de Empresa")+
+  facet_wrap(~TipoEmpresa)+
+  theme_grey()+
+  theme(legend.position = "none")                            
+#solvencia
+ggplot(empresas_activa, aes(x=fecha_const,  y = Apalancamiento, color= TipoEmpresa, group=TipoEmpresa)) +
+  geom_line() +
+  labs(title = "Gráfico comparativo",
+       subtitle = "Gráfico comparativo entre Liquidez Corriente y Tipo de Empresa")+
+  facet_wrap(~TipoEmpresa)+
+  theme_grey()+
+  theme(legend.position = "none") 
+```
+
+### Preguntas de Investigación
 
 
-
-
-Para entender mejor los datos calculamos los estadísticos de las variables numéricas. Para ellos utilizamos el comando summary(), que nos muestra estadísticas descriptivas como el mínimo, máximo, cuartiles, promedio. El resultado aplicado a toda la base es el siguiente:
+#### ¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
 
 ```{r}
-summary(empresas_1)
+
+pregunta1<-empresas_4 %>% dplyr::group_by(empresas_4$tamanio) %>% summarise(Promedio_Endeudamiento=mean(EndeudamientoActivo, na.rm = TRUE))
+# pregunta1
+ggplot(pregunta1, aes(x = tamanio, y = Promedio_Endeudamiento, fill = tamanio)) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(title = "Promedio del Endeudamiento Activo por Tamaño de Empresa",
+       x = "Tamaño de Empresa",
+       y = "Promedio del Endeudamiento Activo") +
+  theme_minimal()
 ```
 
-### 2.Crea una tabla resumiendo el número total de empresas por actividad económica y
-por actividad económica por cada cantón. La tabla simplemente debe aparecer
-como un data frame o tibble en tu script. 
+#### ¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de 60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?
 
+```{r}
+#empresas_filtradas <- empresas_4 %>%
+ # dplyr:::filter(empresas_4$trabajadores_administrativos >= 100, empresas_4$trabajadores_administrativos <= 800,empresas_4$trabajadores_directo > 60)
 
-### 3. Gráficamente muestra el comparativo de los indicadores financieros de liquidez y
-solvencia por Status y provincia.
+#empresas_filtradas
 
-### 4.Gráficamente muestra el comparativo de los indicadores financieros de liquidez y
-solvencia por tipo de empresa.
-
-
-
-
-## Preguntas de Investigación
-
-### ¿El endeudamiento del activo fue mayor en empresas micro + pequeñas vs. grandes?
-
-### ¿La liquidez por tipo de compañía es diferente entre aquellas empresas que tienen más de
-60 trabajadores directos y que cuenta con 100 a 800 trabajadores administrativos?
-
-### Describe el top 10 de empresas con mayor apalancamiento.
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r cars}
-summary(cars)
+#pregunta2 <- empresas_filtradas %>%
+#  dplyr::group_by(empresas_filtradas$TipoEmpresa) %>%
+#  summarise(Promedio_Liquidez = mean(LiquidezCorriente, na.rm = FALSE))#liquidez por tipo de empresa
+#pregunta2
+ ggplot(pregunta2, aes(x = TipoEmpresa, y = Promedio_Liquidez, fill = TipoEmpresa)) +
+  geom_bar(stat = "identity") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(title = "Promedio de Liquidez por Tipo de Empresa",
+       x = "Tipo de Empresa",
+       y = "Promedio de Liquidez") +
+  theme_minimal()
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+
+#### Describe el top 10 de empresas con mayor apalancamiento.
+```{r}
+top_empresas_apalancamiento <- empresas_4 %>%
+  dplyr::arrange(desc(empresas_4$Apalancamiento)) %>%
+  head(10) 
+top_empresas_apalancamiento
+
+grafico_apalancamiento <- ggplot(top_empresas_apalancamiento, aes(x = Empresas, y = Apalancamiento, fill = Empresas)) +
+  geom_bar(stat = "identity") +
+ labs(title = "Top 10 Empresas con Mayor Apalancamiento",
+       x = "Empresas",
+       y = "Apalancamiento") +
+ theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+ scale_fill_discrete(name = "Empresas")
+grafico_apalancamiento
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 
-## Conclusiones
 
-Las ratios financieros se usan habitualmente para analizar el comportamiento económico y financiero de la empresa, simplificar la toma de decisiones y mejorar su gestión.
+
+
+## Resumen
+
+El código proporcionado carga datos de diferentes fuentes y realiza varias transformaciones para crear un tibble llamado "empresas_1" que contiene información relevante sobre empresas y algunos ratios financieros calculados. El análisis general es el siguiente:
+
+Datos cargados: Se han cargado datos de diferentes archivos:
+
+•	balances_2014.xlsx: Datos de balances de empresas en el año 2014.
+
+•	cias_codebook.xlsx: Información sobre variables utilizadas en balances_2014.xlsx.
+
+•	ciiu.xlsx: Clasificación de la actividad económica según la CIIU.
+
+•	Formulario_102.xls: Posible información adicional.
+
+Estructura de datos: Los datos de balances_2014.xlsx se han convertido en un tibble llamado "empresas" para facilitar su manipulación y análisis. Los tibbles son una forma moderna y mejorada de almacenar datos en R, similar a los data frames.
+Variables calculadas: A partir del tibble "empresas", se han calculado cinco ratios financieros importantes:
+
+•	Liquidez Corriente: Mide la capacidad de la empresa para pagar sus deudas a corto plazo.
+
+•	Endeudamiento Activo: Indica cuánto del activo de la empresa está financiado por deuda.
+
+•	Endeudamiento Patrimonial: Muestra la proporción de activos financiados por el patrimonio.
+
+•	Endeudamiento Activo Fijo: Refleja cuánto del activo fijo está financiado por deuda.
+
+•	Apalancamiento: Representa la proporción de deuda respecto al patrimonio de la empresa.
+
+Selección de variables: Del tibble "empresas_1", se han seleccionado ciertas variables para mantener información relevante sobre las empresas junto con los ratios financieros calculados. Estas variables incluyen nombre de la compañía, situación, tipo de empresa, ubicación geográfica y clasificación de la actividad económica.
